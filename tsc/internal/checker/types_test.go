@@ -359,7 +359,9 @@ func TestIntersectionReductionReentrancy(t *testing.T) {
 	assert.Assert(t, c.freePropertyCounts.next != nil)
 	workspace := c.freePropertyCounts
 	conflicting := c.newSymbolEx(ast.SymbolFlagsProperty, "value", ast.CheckFlagsContainsPrivate)
-	outer.AsUnionOrIntersectionType().propertyCacheWithoutFunctionPropertyAugment["value"] = conflicting
+	cached := outer.AsUnionOrIntersectionType().propertyCache["value"]
+	cached.propertyWithoutFunctionPropertyAugment = conflicting
+	outer.AsUnionOrIntersectionType().propertyCache["value"] = cached
 	assert.Assert(t, c.somePropertyReducesToNever(outer))
 	assert.Equal(t, c.freePropertyCounts, workspace)
 	for counts := c.freePropertyCounts; counts != nil; counts = counts.next {
