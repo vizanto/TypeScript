@@ -1,6 +1,6 @@
 //go:build !linux
 
-package main
+package batch
 
 // cgroupMemoryLimit reports no limit: cgroups only exist on Linux.
 func cgroupMemoryLimit() (limit uint64, known bool) {

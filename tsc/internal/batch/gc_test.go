@@ -1,4 +1,4 @@
-package main
+package batch
 
 import (
 	"math"
@@ -126,5 +126,22 @@ func TestBatchGCRestoreStopsAdjusting(t *testing.T) {
 	g.collected()
 	if gc, limit := gcSettings(); gc != 100 || limit != 16<<30 {
 		t.Fatalf("GC = %d, limit = %d", gc, limit)
+	}
+}
+
+func TestBeginRestoresSettings(t *testing.T) {
+	if _, known := cgroupMemoryLimit(); !known {
+		t.Skip("cgroup memory limit is unknown")
+	}
+	setGCEnv(t, nil, nil)
+	programBound, end := Begin()
+	defer end()
+	if gc, _ := gcSettings(); gc == 100 {
+		t.Fatalf("Begin did not change GC: GC = %d", gc)
+	}
+	programBound()
+	end()
+	if gc, limit := gcSettings(); gc != 100 || limit != 16<<30 {
+		t.Fatalf("restored GC = %d, limit = %d", gc, limit)
 	}
 }

@@ -1,6 +1,6 @@
 //go:build !linux
 
-package main
+package batch
 
 // reserveHugePageHeap only applies to Linux transparent huge pages.
 func reserveHugePageHeap(memory uint64) {}
