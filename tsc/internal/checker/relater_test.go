@@ -55,9 +55,9 @@ func TestSimpleRelationFlagPaths(t *testing.T) {
 	parameter := c.newTypeParameter(nil)
 	undefined := c.newIntrinsicType(TypeFlagsUndefined, "undefined")
 	null := c.newIntrinsicType(TypeFlagsNull, "null")
-	unknownUnion := c.newType(TypeFlagsUnion, ObjectFlagsNone, &UnionType{
+	unknownUnion := c.newType(TypeFlagsUnion, ObjectFlagsNone, (&UnionType{
 		UnionOrIntersectionType: UnionOrIntersectionType{types: []*Type{undefined, null, object}},
-	})
+	}).AsType(), typeKindUnion)
 	for i, test := range []struct {
 		source, target *Type
 		relation       *Relation

@@ -350,8 +350,10 @@ func TestIntersectionReductionReentrancy(t *testing.T) {
 	c, _ := newCompositeTestChecker()
 	property := c.newSymbol(ast.SymbolFlagsProperty, "value")
 	object := c.newAnonymousType(nil, ast.SymbolTable{"value": property}, nil, nil, nil)
-	inner := c.newIntersectionType(ObjectFlagsNone, []*Type{object, object})
-	outer := c.newIntersectionType(ObjectFlagsNone, []*Type{inner, object})
+	// Intersections of up to four constituents reduce through their member tables and borrow no
+	// property counts, so both levels take five to reach the counting pass this test nests.
+	inner := c.newIntersectionType(ObjectFlagsNone, []*Type{object, object, object, object, object})
+	outer := c.newIntersectionType(ObjectFlagsNone, []*Type{inner, object, object, object, object})
 	assert.Equal(t, c.getReducedType(outer), outer)
 	assert.Equal(t, c.getReducedType(inner), inner)
 	assert.Equal(t, c.getPropertyOfUnionOrIntersectionType(outer, "value", true), property)
@@ -511,7 +513,8 @@ func TestCompactValueSymbolLinksLayout(t *testing.T) {
 
 func TestCompactStructuredTypeLayout(t *testing.T) {
 	t.Parallel()
-	assert.Equal(t, unsafe.Sizeof(StructuredType{}), unsafe.Sizeof(ConstrainedType{})+5*unsafe.Sizeof(uintptr(0)))
+	// Members, the shared member layout, the properties slice, the lazy members and the extra.
+	assert.Equal(t, unsafe.Sizeof(StructuredType{}), unsafe.Sizeof(ConstrainedType{})+7*unsafe.Sizeof(uintptr(0)))
 }
 
 func TestStructuredTypeExtra(t *testing.T) {

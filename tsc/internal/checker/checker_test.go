@@ -36,7 +36,7 @@ func TestTemplateLiteralUnionAlternatives(t *testing.T) {
 		"/tsconfig.json": `{"compilerOptions": {"strict": true}, "files": ["main.ts"]}`,
 	}, tspath.CaseInsensitive))
 
-	parsed, errors := tsoptions.GetParsedCommandLineOfConfigFile("/tsconfig.json", &core.CompilerOptions{}, nil, fs, nil)
+	parsed, errors := tsoptions.GetParsedCommandLineOfConfigFile("/tsconfig.json", &core.CompilerOptions{}, nil, tsoptions.NewDefaultParseConfigHost(fs), nil)
 	assert.Equal(t, len(errors), 0)
 	p := compiler.NewProgram(compiler.ProgramOptions{
 		Config: parsed,
@@ -79,7 +79,7 @@ const staticOverride: string = Derived.overridden;
 `,
 		"/tsconfig.json": `{"compilerOptions": {"strict": true, "target": "esnext"}, "files": ["main.ts"]}`,
 	}, tspath.CaseInsensitive))
-	parsed, errors := tsoptions.GetParsedCommandLineOfConfigFile("/tsconfig.json", &core.CompilerOptions{}, nil, fs, nil)
+	parsed, errors := tsoptions.GetParsedCommandLineOfConfigFile("/tsconfig.json", &core.CompilerOptions{}, nil, tsoptions.NewDefaultParseConfigHost(fs), nil)
 	assert.Equal(t, len(errors), 0)
 	p := compiler.NewProgram(compiler.ProgramOptions{
 		Config: parsed,
@@ -209,7 +209,7 @@ type Module = typeof import("./other") & { renamed: "b" };
 		"/tsconfig.json": `{"compilerOptions":{"strict":true},"files":["main.ts","other.ts"]}`,
 	}, tspath.CaseInsensitive))
 	host := compiler.NewCompilerHost(fs, bundled.LibPath(), nil, nil, nil)
-	parsed, errors := tsoptions.GetParsedCommandLineOfConfigFile("/tsconfig.json", &core.CompilerOptions{}, nil, fs, nil)
+	parsed, errors := tsoptions.GetParsedCommandLineOfConfigFile("/tsconfig.json", &core.CompilerOptions{}, nil, tsoptions.NewDefaultParseConfigHost(fs), nil)
 	assert.Equal(t, len(errors), 0)
 	p := compiler.NewProgram(compiler.ProgramOptions{Config: parsed, Host: host})
 	p.BindSourceFiles()

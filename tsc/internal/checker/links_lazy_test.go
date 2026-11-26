@@ -14,13 +14,13 @@ func TestInstantiateSymbolDoesNotAllocateSourceLinks(t *testing.T) {
 		t.Fatal("instantiating an unresolved symbol allocated source links")
 	}
 	links := c.valueSymbolLinks.TryGet(result)
-	if links == nil || links.target != source || links.mapper != nil || links.nameType != nil {
+	if links == nil || links.target != source || links.mapper != nil || links.getNameType() != nil {
 		t.Fatal("instantiation lost its target or zero-valued metadata")
 	}
 	nameType := &Type{flags: TypeFlagsStringLiteral}
-	c.valueSymbolLinks.Get(source).nameType = nameType
+	c.valueSymbolLinks.Get(source).setNameType(&c, nameType)
 	result = c.instantiateSymbol(source, nil)
-	if c.valueSymbolLinks.TryGet(result).nameType != nameType {
+	if c.valueSymbolLinks.TryGet(result).getNameType() != nameType {
 		t.Fatal("instantiation lost existing name metadata")
 	}
 }

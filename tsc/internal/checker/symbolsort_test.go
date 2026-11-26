@@ -285,7 +285,7 @@ func TestCompactTypeReferenceMembers(t *testing.T) {
 			t.Fatal("object property lookup must support compact member storage")
 		}
 	}
-	resolved.signatures = []*Signature{{}}
+	resolved.ensureExtra().signatures = []*Signature{{}}
 	withoutSignatures := c.getTypeWithoutSignatures(second).AsStructuredType()
 	if resolved.memberLayout != nil || withoutSignatures.memberLayout != nil {
 		t.Fatal("a table-sharing clone must materialize the table")
